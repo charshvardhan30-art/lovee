@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Will You Be My Valentine?</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-font-smoothing: antialiased;
+}
+
+html {
+  height: 100%;
+  overflow-x: hidden;
+}
+
+body {
+  background: linear-gradient(135deg, #ffafbd, #ffc3a0);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 15px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+  touch-action: manipulation;
+}
+
+.container {
+  width: 100%;
+  max-width: 500px;
+  background-color: rgba(255, 255, 255, 0.95);
+  border-radius: 20px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+  padding: 25px 20px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  border: 10px solid #ff5e8e;
+}
+
+.header {
+  margin-bottom: 25px;
+}
+
+h1 {
+  color: #ff2e77;
+  font-size: clamp(1.8rem, 6vw, 2.5rem);
+  margin-bottom: 10px;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+  line-height: 1.2;
+}
+
+.subtitle {
+  color: #ff5e8e;
+  font-size: clamp(1rem, 4vw, 1.3rem);
+  margin-bottom: 15px;
+}
+
+.heart-icon {
+  color: #ff2e77;
+  font-size: clamp(3rem, 10vw, 4rem);
+  margin-bottom: 15px;
+  animation: heartbeat 1.5s infinite;
+}
+
+.message {
+  background-color: #fff0f5;
+  border-radius: 15px;
+  padding: 20px 15px;
+  margin-bottom: 30px;
+  border: 2px dashed #ff5e8e;
+  font-size: clamp(0.95rem, 3.5vw, 1.1rem);
+  line-height: 1.5;
+  color: #a52a55;
+}
+
+.buttons-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 30px;
+  position: relative;
+  min-height: 180px;
+  width: 100%;
+}
+
+.valentine-btn {
+  padding: clamp(14px, 4vw, 18px) clamp(30px, 8vw, 40px);
+  font-size: clamp(1.3rem, 4.5vw, 1.6rem);
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: bold;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  width: 100%;
+  max-width: 280px;
+}
+
+.valentine-btn:active {
+  transform: scale(0.98);
+}
+
+#yes-btn {
+  background-color: #ff2e77;
+  color: white;
+  position: relative;
+  z-index: 10;
+}
+
+#yes-btn:hover, #yes-btn:active {
+  background-color: #ff0a5c;
+  transform: scale(0.98);
+  box-shadow: 0 6px 15px rgba(255, 46, 119, 0.3);
+}
+
+#no-btn {
+  background-color: #6c757d;
+  color: white;
+  position: absolute;
+  transition: all 0.15s ease;
+  z-index: 5;
+}
+
+#no-btn:active {
+  background-color: #5a6268;
+}
+
+.result {
+  display: none;
+  margin-top: 20px;
+  padding: 20px 15px;
+  background-color: #fff0f5;
+  border-radius: 15px;
+  border: 2px solid #ff2e77;
+  font-size: clamp(1.1rem, 4vw, 1.3rem);
+  color: #a52a55;
+  line-height: 1.4;
+}
+
+.footer {
+  margin-top: 20px;
+  color: #ff5e8e;
+  font-size: clamp(0.85rem, 3vw, 0.95rem);
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="heart-icon"><i class="fas fa-heart"></i></div>
+    <h1>Will You Be My Valentine?</h1>
+    <p class="subtitle">You make my heart skip a beat!</p>
+  </div>
+
+  <div class="message">
+    <p>My dearest, from the moment we met, you've filled my life with joy. Every day with you is special, but on this Valentine's Day, I want to ask you something important...</p>
+    <p><strong>Will you be my Valentine and make this day unforgettable?</strong></p>
+  </div>
+
+  <div class="buttons-container">
+    <button id="yes-btn" class="valentine-btn">YES!</button>
+    <button id="no-btn" class="valentine-btn">No</button>
+  </div>
+
+  <div id="result" class="result">
+    <p id="result-text"></p>
+  </div>
+
+  <div class="footer">
+    <p>Made with <i class="fas fa-heart" style="color:#ff2e77"></i> for you on Valentine's Day</p>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const yesBtn = document.getElementById('yes-btn');
+  const noBtn = document.getElementById('no-btn');
+  const result = document.getElementById('result');
+  const resultText = document.getElementById('result-text');
+  const buttonsContainer = document.querySelector('.buttons-container');
+
+  let moveCount = 0;
+  const maxMoves = 12;
+
+  function moveNoButton() {
+    moveCount++;
+    const containerWidth = buttonsContainer.clientWidth;
+    const containerHeight = buttonsContainer.clientHeight;
+    const btnWidth = noBtn.clientWidth;
+    const btnHeight = noBtn.clientHeight;
+
+    const maxX = Math.max(10, containerWidth - btnWidth - 10);
+    const maxY = Math.max(10, containerHeight - btnHeight - 10);
+
+    const randomX = Math.floor(Math.random() * maxX);
+    const randomY = Math.floor(Math.random() * maxY);
+
+    noBtn.style.left = `${randomX}px`;
+    noBtn.style.top = `${randomY}px`;
+
+    if (moveCount > 4 && moveCount < 8) {
+      noBtn.textContent = "Are you sure?";
+    } else if (moveCount >= 8 && moveCount < maxMoves) {
+      noBtn.textContent = "Please say yes!";
+    } else if (moveCount >= maxMoves) {
+      noBtn.textContent = "Okay, fine!";
+      noBtn.onclick = function(e) {
+        e.stopPropagation();
+        showResult("You finally clicked 'No' ... but I know you meant 'Yes'!");
+      }
+    }
+  }
+
+  function handleYesClick() {
+    showResult("YAY! You've made me the happiest person ever! Happy Valentine's Day, my love!");
+  }
+
+  function showResult(message) {
+    resultText.textContent = message;
+    result.style.display = "block";
+    yesBtn.disabled = true;
+    noBtn.disabled = true;
+    yesBtn.style.opacity = "0.7";
+    noBtn.style.opacity = "0.7";
+  }
+
+  yesBtn.addEventListener('click', handleYesClick);
+  noBtn.addEventListener('mouseover', moveNoButton);
+  noBtn.addEventListener('click', moveNoButton);
+
+  moveNoButton();
+});
+</script>
+</body>
+</html>
